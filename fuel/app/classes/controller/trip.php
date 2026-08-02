@@ -10,6 +10,11 @@ class Controller_Trip extends Controller_Base
   {
     $trips = Model_Trip::get_by_user($this->user_id);
 
+    foreach ($trips as &$trip) {
+      $trip['meter_class'] = $this->weight_meter_class($trip['current_weight'], $trip['target_weight']);
+    }
+    unset($trip);
+
     return View::forge('trip/index', array('trips' => $trips));
   }
 
@@ -130,5 +135,27 @@ class Controller_Trip extends Controller_Base
     }
 
     return (int) $value;
+  }
+
+  /**
+   * 現在の総重量と目標重量から、重量メーターの警告色クラスを判定する
+   *
+   * @param int $current_weight
+   * @param int $target_weight
+   * @return string
+   */
+  private function weight_meter_class($current_weight, $target_weight)
+  {
+    $percentage = $target_weight > 0 ? ($current_weight / $target_weight) * 100 : 0;
+
+    if ($percentage >= Config::get('packing.danger_threshold')) {
+      return 'weight-danger';
+    }
+
+    if ($percentage >= Config::get('packing.warning_threshold')) {
+      return 'weight-warning';
+    }
+
+    return 'weight-ok';
   }
 }

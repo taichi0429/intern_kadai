@@ -3,17 +3,21 @@
 class Model_Trip
 {
   /**
-   * ログイン中ユーザーの旅行リストを一覧取得する
+   * ログイン中ユーザーの旅行リストを、現在の総重量（持ち物の重量合計）付きで一覧取得する
    *
    * @param int $user_id
    * @return array
    */
   public static function get_by_user($user_id)
   {
-    return DB::select()
+    return DB::select('trips.*')
+      ->select(array(DB::expr('COALESCE(SUM(items.weight * items.quantity), 0)'), 'current_weight'))
       ->from('trips')
-      ->where('user_id', '=', $user_id)
-      ->order_by('created_at', 'desc')
+      ->join('items', 'left')
+      ->on('items.trip_id', '=', 'trips.id')
+      ->where('trips.user_id', '=', $user_id)
+      ->group_by('trips.id')
+      ->order_by('trips.created_at', 'desc')
       ->execute()
       ->as_array();
   }

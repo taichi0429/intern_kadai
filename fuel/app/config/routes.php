@@ -4,4 +4,7 @@ return array(
 	'_404_'   => 'welcome/404',    // The main 404 route
 	
 	'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
+
+	// /item/{trip_id} でパッキングリスト画面を表示する
+	'item/(:num)' => 'item/index/$1',
 );
