@@ -5,6 +5,6 @@ return array(
 	
 	'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
 
-	// /item/{trip_id} でパッキングリスト画面を表示する
+	// パッキングリスト画面を表示する
 	'item/(:num)' => 'item/index/$1',
 );
