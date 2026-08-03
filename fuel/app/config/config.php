@@ -259,7 +259,7 @@ return array(
 	/**************************************************************************/
 	/* Always Load                                                            */
 	/**************************************************************************/
-	// 'always_load'  => array(
+	'always_load'  => array(
 
 		/**
 		 * These packages are loaded on Fuel's startup.
@@ -299,7 +299,7 @@ return array(
 		 * add it like 'session' => 'auth'.
 		 * If you don't want the config in a group use null as groupname.
 		 */
-		// 'config'  => array(),
+		'config'  => array('packing'),
 
 		/**
 		 * Language files to autoload
@@ -310,6 +310,6 @@ return array(
 		 * If you don't want the lang in a group use null as groupname.
 		 */
 		// 'language'  => array(),
-	// ),
+	),
 
 );
