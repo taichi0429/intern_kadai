@@ -11,7 +11,13 @@ $success = Session::get_flash('success');
 </head>
 <body>
   <div class="page">
-    <h2><?php echo Security::htmlentities($trip['title']); ?> のパッキングリスト</h2>
+    <div class="page-header">
+      <h2><?php echo Security::htmlentities($trip['title']); ?> のパッキングリスト</h2>
+      <form action="/auth/logout" method="POST">
+        <?php echo Form::csrf(); ?>
+        <button class="btn-link" type="submit">ログアウト</button>
+      </form>
+    </div>
 
     <?php if ($error): ?>
       <p class="error"><?php echo Security::htmlentities($error); ?></p>
@@ -29,6 +35,18 @@ $success = Session::get_flash('success');
           (<span data-bind="text: percentage"></span>%)
         </p>
       </div>
+
+      <div class="flex gap-12 mb-16">
+        <?php if (! empty($categories)): ?>
+          <button class="btn" type="button" onclick="document.getElementById('item-modal').showModal()">+持ち物を追加</button>
+        <?php endif; ?>
+        <button class="btn" type="button" onclick="document.getElementById('category-modal').showModal()">+新しいカテゴリを追加</button>
+        <button class="btn" type="button" onclick="document.getElementById('category-list-modal').showModal()">カテゴリ一覧</button>
+      </div>
+
+      <?php if (empty($categories)): ?>
+        <p class="text-muted">先にカテゴリを作成してください。</p>
+      <?php endif; ?>
 
       <div data-bind="foreach: groupedItems">
         <h4 data-bind="text: categoryName"></h4>
@@ -51,33 +69,60 @@ $success = Session::get_flash('success');
       </div>
     </div>
 
-    <h3>+持ち物を追加</h3>
-    <?php if (empty($categories)): ?>
-      <p class="text-muted">先にカテゴリを作成してください。</p>
-    <?php else: ?>
-      <form class="form-inline" action="/item/item_create" method="POST">
+    <p class="mt-16"><a href="/trip">旅行リストへ戻る</a></p>
+  </div>
+
+  <?php if (! empty($categories)): ?>
+    <dialog id="item-modal">
+      <h3>持ち物を追加</h3>
+      <form action="/item/item_create" method="POST">
         <?php echo Form::csrf(); ?>
         <input type="hidden" name="trip_id" value="<?php echo (int) $trip['id']; ?>">
-        <select class="form-select" name="category_id" required>
-          <?php foreach ($categories as $category): ?>
-            <option value="<?php echo (int) $category['id']; ?>"><?php echo Security::htmlentities($category['name']); ?></option>
-          <?php endforeach; ?>
-        </select>
-        <input class="form-input" type="text" name="name" placeholder="アイテム名" required>
-        <input class="form-input" type="number" name="weight" placeholder="重量(g) ※任意" min="0">
-        <input class="form-input" type="number" name="quantity" placeholder="数量" value="1" min="1" required>
-        <button class="btn" type="submit">追加</button>
+        <div class="form-group">
+          <label class="form-label" for="item-category-id">カテゴリ：</label>
+          <select class="form-select" id="item-category-id" name="category_id" required>
+            <?php foreach ($categories as $category): ?>
+              <option value="<?php echo (int) $category['id']; ?>"><?php echo Security::htmlentities($category['name']); ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="item-name">アイテム名：</label>
+          <input class="form-input" type="text" id="item-name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="item-weight">重量（g）※任意：</label>
+          <input class="form-input" type="number" id="item-weight" name="weight" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="item-quantity">数量：</label>
+          <input class="form-input" type="number" id="item-quantity" name="quantity" value="1" min="1" required>
+        </div>
+        <div class="flex gap-12">
+          <button class="btn" type="submit">追加</button>
+          <button class="btn-link" type="button" onclick="document.getElementById('item-modal').close()">キャンセル</button>
+        </div>
       </form>
-    <?php endif; ?>
+    </dialog>
+  <?php endif; ?>
 
+  <dialog id="category-modal">
     <h3>新しいカテゴリを追加</h3>
-    <form class="form-inline" action="/item/category_create" method="POST">
+    <form action="/item/category_create" method="POST">
       <?php echo Form::csrf(); ?>
       <input type="hidden" name="trip_id" value="<?php echo (int) $trip['id']; ?>">
-      <input class="form-input" type="text" name="name" placeholder="カテゴリ名" required>
-      <button class="btn" type="submit">追加</button>
+      <div class="form-group">
+        <label class="form-label" for="category-name">カテゴリ名：</label>
+        <input class="form-input" type="text" id="category-name" name="name" required>
+      </div>
+      <div class="flex gap-12">
+        <button class="btn" type="submit">追加</button>
+        <button class="btn-link" type="button" onclick="document.getElementById('category-modal').close()">キャンセル</button>
+      </div>
     </form>
+  </dialog>
 
+  <dialog id="category-list-modal">
     <h3>カテゴリ一覧</h3>
     <?php if (empty($categories)): ?>
       <p class="text-muted">カテゴリがありません。</p>
@@ -98,9 +143,10 @@ $success = Session::get_flash('success');
         <?php endforeach; ?>
       </ul>
     <?php endif; ?>
-
-    <p class="mt-16"><a href="/trip">旅行リストへ戻る</a></p>
-  </div>
+    <div class="flex gap-12">
+      <button class="btn-link" type="button" onclick="document.getElementById('category-list-modal').close()">閉じる</button>
+    </div>
+  </dialog>
 
   <script src="/assets/js/knockout.js"></script>
   <script src="/assets/js/packing.js"></script>

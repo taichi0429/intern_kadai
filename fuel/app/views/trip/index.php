@@ -8,7 +8,13 @@
 </head>
 <body>
   <div class="page">
-    <h2>旅行リスト</h2>
+    <div class="page-header">
+      <h2>旅行リスト</h2>
+      <form action="/auth/logout" method="POST">
+        <?php echo Form::csrf(); ?>
+        <button class="btn-link" type="submit">ログアウト</button>
+      </form>
+    </div>
 
     <?php if ($error): ?>
       <p class="error"><?php echo Security::htmlentities($error); ?></p>
@@ -19,7 +25,7 @@
     <?php else: ?>
       <ul class="card-list">
         <?php foreach ($trips as $trip): ?>
-          <li class="card">
+          <li class="card card-clickable" data-href="/item/<?php echo $trip['id']; ?>">
             <p class="card-title"><?php echo $trip['title']; ?></p>
 
             <div class="weight-meter">
@@ -42,5 +48,7 @@
 
     <p class="mt-16"><a href="/trip/create">+新しい旅行リストを作成</a></p>
   </div>
+
+  <script src="/assets/js/card-link.js"></script>
 </body>
 </html>

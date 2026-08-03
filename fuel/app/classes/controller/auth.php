@@ -99,4 +99,18 @@ class Controller_Auth extends Controller
     Session::set_flash('success', '登録が完了しました。ログインしてください。');
     Response::redirect('auth/login');
   }
+
+  /**
+   * ログアウトする（POSTアクセス）
+   */
+  public function post_logout()
+  {
+    if (! Security::check_token()) {
+      Response::redirect('trip');
+    }
+
+    Session::destroy();
+
+    Response::redirect('auth/login');
+  }
 }

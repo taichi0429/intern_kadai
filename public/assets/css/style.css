@@ -23,7 +23,14 @@ h2 {
   font-size: 22px;
   font-weight: 600;
   color: #212121;
-  margin: 0 0 20px;
+  margin: 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 h3 {
@@ -210,6 +217,15 @@ a:hover {
   margin: 0 0 10px;
 }
 
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:hover {
+  border-color: #cfd8dc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* 重量メーター（旅行リスト・パッキングリスト共通） */
 .weight-meter {
   margin-bottom: 16px;
@@ -292,4 +308,22 @@ progress.weight-danger::-moz-progress-bar {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* モーダル（持ち物追加・カテゴリ追加） */
+dialog {
+  border: none;
+  border-radius: 10px;
+  padding: 22px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+dialog h3 {
+  margin-top: 0;
 }
